@@ -1,32 +1,33 @@
-export function bottomToTopTransition({ current, next, layouts }) {
-    const translateY = current.progress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [layouts.screen.height, 0],
+import { useSpring, animated } from 'react-spring'
+
+export function bottomToTopTransition(props) {
+    const { y } = useSpring({
+        from: { y: props.height },
+        to: { y: 0 }
     });
 
-    const slideFromTop = { transform: [{ translateY }] };
-    const slideToTop = { transform: [{ translateY }] };
+    const slideFromTop = { transform: y.interpolate(y => `translate3d(0,${y}px,0)`) };
+    const slideToTop = { transform: y.interpolate(y => `translate3d(0,${y}px,0)`) };
 
     return {
-        cardStyle: next
+        cardStyle: props.next
             ? slideFromTop
             : slideToTop,
     };
 }
 
-export function rightToLeftTransition({ current, next, layouts }) {
-    const translateX = current.progress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [layouts.screen.width, 0],
+export function rightToLeftTransition(props) {
+    const { x } = useSpring({
+        from: { x: props.width },
+        to: { x: 0 }
     });
 
-    const slideFromRight = { transform: [{ translateX }] };
-    const slideToLeft = { transform: [{ translateX }] };
+    const slideFromRight = { transform: x.interpolate(x => `translate3d(${x}px,0,0)`) };
+    const slideToLeft = { transform: x.interpolate(x => `translate3d(${x}px,0,0)`) };
 
     return {
-        cardStyle: next
+        cardStyle: props.next
             ? slideFromRight
             : slideToLeft,
     };
 }
-

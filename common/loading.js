@@ -1,37 +1,30 @@
-import React from 'react';
-import { View, Animated, Easing, StyleSheet } from 'react-native';
-import LoadingIcon from '../assets/icons/loading.svg';
+import React, { useEffect, useRef } from 'react';
+import { useSpring, animated } from 'react-spring';
+import './loading.css';
 
 export const Loading = () => {
-  const spinValue = new Animated.Value(0);
+  const spinValue = useRef(0);
 
-  Animated.loop(
-    Animated.timing(spinValue, {
-      toValue: 1,
-      duration: 1000,
-      easing: Easing.linear,
-      useNativeDriver: true,
-    })
-  ).start();
-
-  const spin = spinValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
+  const { springValue } = useSpring({
+    from: { springValue: 0 },
+    to: async (next) => {
+      while (1) {
+        await next({ springValue: 1 });
+        await next({ springValue: 0 });
+      }
+    },
+    config: { duration: 1000 },
   });
 
+  useEffect(() => {
+    spinValue.current = springValue.to((val) => val * 360);
+  }, [springValue]);
+
   return (
-    <View style={styles.container}>
-      <Animated.View style={{ transform: [{ rotate: spin }] }}>
-        <LoadingIcon width={40} height={40} />
-      </Animated.View>
-    </View>
+    <div className="container">
+      <animated.div style={{ transform: spinValue.current.interpolate((val) => `rotate(${val}deg)`) }}>
+        <img src="/assets/icons/loading.svg" width="40px" height="40px" alt="Loading" />
+      </animated.div>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

@@ -1,4 +1,4 @@
-import { Text } from "react-native";
+import { Text } from "react";
 import { COLORS, FONTS } from "../styles/styles";
 
 export class Format {
