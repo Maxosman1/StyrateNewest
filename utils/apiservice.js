@@ -1,6 +1,5 @@
 import { FakeData } from "./fakedata";
 import DummyProfile from "../assets/temp/profile-pic.jpg";
-import { Constant } from "./constants";
 
 export class APIService {
 
@@ -16,13 +15,13 @@ export class APIService {
         return FakeData.rewards;
     }
 
-    static getVideos() {
+    static getAllVideos() {
         return FakeData.videos;
     }
 
     static getVideos(type) {
-        if (!type || type === 'all') return FakeData.videos;
-        else return FakeData.videos.filter(video => video.type === type);
+        if (!type || type == 'all') return FakeData.videos;
+        else return FakeData.videos.filter(video => video.type == type);
     }
 
     static getProfileData() {
@@ -30,7 +29,11 @@ export class APIService {
     }
 
     static getContestDetails(id) {
-        const description = Constant.contests.categories.flatMap(category => category.contests).find(contest => contest.id === id).description;
+        const contestFromData = Constant.contests.categories.flatMap(category => category.contests).find(contest => contest.id === id);
+        if (!contestFromData) {
+            throw new Error("The selected id could not be found in the contest data.");
+        }
+        const description = contestFromData.description;
         return {
             description,
             price: 100,
@@ -38,5 +41,4 @@ export class APIService {
             topVideos: FakeData.videos 
         }
     }
-
 }
